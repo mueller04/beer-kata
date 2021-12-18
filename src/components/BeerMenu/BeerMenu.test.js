@@ -5,7 +5,7 @@ import BeerMenu from './BeerMenu';
 
 describe('<BeerMenu />', () => {
 
-  it('should contain all props for beers', () => {
+  it('should render all displayed props for beers', () => {
     const BEER1_NAME = 'test-name';
     const BEER1_TAGLINE = 'test-tagline';
     const BEER1_URL = 'test-url';
@@ -29,8 +29,7 @@ describe('<BeerMenu />', () => {
         ingredients: {
             hops: [
               {
-                name: 'Lactose',
-                amount: {},
+                name: '',
                 add: 'nothing'
               }
             ]
@@ -46,6 +45,7 @@ describe('<BeerMenu />', () => {
         ingredients: {
           hops: [
             {
+              name: '',
               add: 'nothing'
             }
           ]
@@ -80,6 +80,7 @@ describe('<BeerMenu />', () => {
         ingredients: {
           hops: [
             {
+              name: '',
               add: 'nothing'
             }
           ]
@@ -91,6 +92,7 @@ describe('<BeerMenu />', () => {
         ingredients: {
           hops: [
             {
+              name: '',
               add: 'nothing'
             }
           ]
@@ -110,10 +112,11 @@ describe('<BeerMenu />', () => {
     const initialState = [
       {
         id: 'test-id',
-        description: 'will count as a highlighted element' ,
+        description: 'counts as a highlighted element' ,
         ingredients: {
           hops: [
             {
+              name: '',
               add: 'dry'
             }
           ]
@@ -121,10 +124,11 @@ describe('<BeerMenu />', () => {
       },
       {
         id: 'test2-id', 
-        description: 'will not count as a highlighted element' ,
+        description: 'does not count as a highlighted element' ,
         ingredients: {
           hops: [
             {
+              name: '',
               add: 'wet'
             }
           ]
@@ -139,5 +143,50 @@ describe('<BeerMenu />', () => {
     const highlightedEls = element.getElementsByClassName('highlight');
     const extraHighlightDescriptionPageKeyElement = 1;
     expect((highlightedEls.length)).toEqual(1 + extraHighlightDescriptionPageKeyElement);
+  });
+
+  it('should display a warning for each beer which contains lactose', () => {
+    const initialState = [
+      {
+        id: 'test-id', 
+        ingredients: {
+          hops: [
+            {
+              name: 'Safe Ingredient',
+              add: 'nothing'
+            }
+          ]
+        }
+      },
+      {
+        id: 'test2-id', 
+        ingredients: {
+          hops: [
+            {
+              name: 'Lactose',
+              add: 'nothing',
+            }
+          ]
+        }
+      },
+      {
+        id: 'test3-id', 
+        ingredients: {
+          hops: [
+            {
+              name: 'Lactose',
+              add: 'nothing',
+            }
+          ]
+        }
+      }
+    ];
+    React.useState = jest.fn().mockReturnValue([initialState, {}])
+
+    const result = render(<BeerMenu />);
+    const element = result.baseElement;
+
+    const highlightedEls = element.getElementsByClassName('warning');
+    expect((highlightedEls.length)).toEqual(2);
   });
 });

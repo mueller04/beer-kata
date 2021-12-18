@@ -14,3 +14,8 @@ img {
 .highlight {
     background-color:#FFFF00; 
 }
+
+.warning {
+    font-weight: bold;
+    font-size: small;
+}

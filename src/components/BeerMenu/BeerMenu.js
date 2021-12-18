@@ -13,18 +13,17 @@ const BeerMenu = () => {
     });
   }, []);
 
-  const beerIsDryHopped = (beer) => {
-    console.log('hopped')
-    console.log(beer.ingredients);
-    return beer.ingredients.hops.some(hop => hop.add.includes('dry'))
+  const hopAttributeFound = (beer, attribute, keyword) => {
+    return beer.ingredients.hops.some(hop => hop[attribute].includes(keyword)); 
   }
 
   return (
     <>
       <Grid container spacing={3} className='beerMenu'>
           {beers.sort((a, b) => {return b.abv - a.abv}).map(beer => {
-            const dryHopped = beerIsDryHopped(beer);
+            const dryHopped = hopAttributeFound(beer, 'add', 'dry');
             const highlighted = dryHopped ? 'highlight': '';
+            const containsLactose = hopAttributeFound(beer, 'name', 'Lactose');
               return (
                 <Grid item xs={12} sm={6} md={4} key={beer.id}>
                   <Item>
@@ -35,6 +34,7 @@ const BeerMenu = () => {
                           <div><img src={beer.image_url} data-testid="image"/></div>
                           <div data-testid="abv">{`abv: ${beer.abv}`}</div>
                           <div>{`ibu: ${beer.ibu}`}</div>
+                          {containsLactose && <div className='warning'>Warning: Contains Lactose</div>}
                       </div>
                   </Item>
                 </Grid>
