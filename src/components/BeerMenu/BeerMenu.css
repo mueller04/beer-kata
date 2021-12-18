@@ -1,5 +1,3 @@
-
-
 img {
     height: 200px;
 }
@@ -11,4 +9,8 @@ img {
 .tagline {
     font-style: italic;
     color: red;
+}
+
+.highlight {
+    background-color:#FFFF00; 
 }

@@ -5,17 +5,6 @@ import BeerMenu from './BeerMenu';
 
 describe('<BeerMenu />', () => {
 
-  let container;
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-  });
-  
-  afterEach(() => {
-    document.body.removeChild(container);
-    container = null;
-  });
-
   it('should contain all props for beers', () => {
     const BEER1_NAME = 'test-name';
     const BEER1_TAGLINE = 'test-tagline';
@@ -36,7 +25,16 @@ describe('<BeerMenu />', () => {
         tagline: BEER1_TAGLINE,
         image_url: BEER1_URL,
         abv: BEER1_ABV,
-        ibu: BEER1_IBU
+        ibu: BEER1_IBU,
+        ingredients: {
+            hops: [
+              {
+                name: 'Lactose',
+                amount: {},
+                add: 'nothing'
+              }
+            ]
+          }
       },
       {
         id: 'test2-id', 
@@ -44,8 +42,16 @@ describe('<BeerMenu />', () => {
         tagline: BEER2_TAGLINE,
         image_url: BEER2_URL,
         abv: BEER2_ABV,
-        ibu: BEER2_IBU      }
-    ]
+        ibu: BEER2_IBU    ,
+        ingredients: {
+          hops: [
+            {
+              add: 'nothing'
+            }
+          ]
+        }  
+      }
+    ];
     React.useState = jest.fn().mockReturnValue([initialState, {}])
 
     const result = render(<BeerMenu />);
@@ -64,5 +70,74 @@ describe('<BeerMenu />', () => {
     expect(element).toHaveTextContent(BEER2_IBU);
     const imageResult2 = result.getAllByTestId('image')[1]
     expect(imageResult2.src).toContain('test2-url')
+  });
+
+  it('should sort beers by ABV Descending', () => {
+    const initialState = [
+      {
+        id: 'test-id', 
+        abv: 1.1,
+        ingredients: {
+          hops: [
+            {
+              add: 'nothing'
+            }
+          ]
+        }
+      },
+      {
+        id: 'test2-id', 
+        abv: 1.2,
+        ingredients: {
+          hops: [
+            {
+              add: 'nothing'
+            }
+          ]
+        }
+      }
+    ];
+    React.useState = jest.fn().mockReturnValue([initialState, {}])
+
+    const result = render(<BeerMenu />);
+
+    const beerABVs = result.getAllByTestId('abv');
+    expect((beerABVs[0].textContent)).toEqual('abv: 1.2');
+    expect((beerABVs[1].textContent)).toEqual('abv: 1.1');
+  });
+
+  it('should highlight dry hopped beers', () => {
+    const initialState = [
+      {
+        id: 'test-id',
+        description: 'will count as a highlighted element' ,
+        ingredients: {
+          hops: [
+            {
+              add: 'dry'
+            }
+          ]
+        }
+      },
+      {
+        id: 'test2-id', 
+        description: 'will not count as a highlighted element' ,
+        ingredients: {
+          hops: [
+            {
+              add: 'wet'
+            }
+          ]
+        }
+      }
+    ];
+    React.useState = jest.fn().mockReturnValue([initialState, {}])
+
+    const result = render(<BeerMenu />);
+    const element = result.baseElement;
+
+    const highlightedEls = element.getElementsByClassName('highlight');
+    const extraHighlightDescriptionPageKeyElement = 1;
+    expect((highlightedEls.length)).toEqual(1 + extraHighlightDescriptionPageKeyElement);
   });
 });
